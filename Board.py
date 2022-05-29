@@ -98,7 +98,25 @@ class Chess_Board:
             y += 100
     def new_Chess_Board(self,board):
         self.drawgrid(board)
+        self.drawgrid(board)
         self.Position_Pieces(board,self.Pos_Array)
+    def update_UI_chess_board(self,board,Position_Positions,Position_New):
+
+        for pos in Position_Positions:
+            Prev_Y,Prev_X = pos
+            if Prev_X!=None or Prev_Y!=None:
+                if (Prev_X+Prev_Y)%2==0:
+                    self.drawRectangle(board, Prev_X*100, Prev_Y*100, 100, 100, "#FDF6EC")
+                else:
+                    self.drawRectangle(board, Prev_X*100, Prev_Y*100, 100, 100, "#C69B7B")
+        New_Y, New_X = Position_New
+        if New_X != None or New_Y != None:
+            if (New_X+New_Y)%2==0:
+                self.drawRectangle(board, New_X*100, New_Y*100, 100, 100, "#FDF6EC")
+            else:
+                self.drawRectangle(board, New_X*100, New_Y*100, 100, 100, "#C69B7B")
+        self.Position_Pieces(board, self.Pos_Array)
+
 
 
     def get_board(self):

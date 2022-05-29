@@ -65,7 +65,7 @@ class Chess_Game_Multiplayer:
         if self.White_Turn_Flag and self.Taking_Turn:
             for i in range(8):
                 for j in range(8):
-                    if grid[i][j]=='wP' or 'BP':
+                    if grid[i][j]=='wP':
                        moves =  self.check_total_Moves(grid, i, j, move_Pawn)
                        if len(moves)>0:
                            return False
@@ -77,7 +77,7 @@ class Chess_Game_Multiplayer:
                        moves =  move_King(grid,'wK' ,i, j)
                        if len(moves)>0:
                            return False
-                    if grid[i][j]=='wP':
+                    if grid[i][j]=='wB':
                        moves =  self.check_total_Moves(grid, i, j, move_Bishop)
                        if len(moves)>0:
                            return False
@@ -105,7 +105,7 @@ class Chess_Game_Multiplayer:
                        moves =  move_King(grid,'BK' ,i, j)
                        if len(moves)>0:
                            return False
-                    if grid[i][j]=='BP':
+                    if grid[i][j]=='BB':
                        moves =  self.check_total_Moves(grid, i, j, move_Bishop)
                        if len(moves)>0:
                            return False
@@ -157,6 +157,51 @@ class Chess_Game_Multiplayer:
                 flag = True
         return flag
 
+    def Pawn_Promotion_Piece(self,chess_board,grid,x,y):
+        chess_board.drawRectangle(self.screen, 150, 250, 150 + (3 * 125) + 25, 250, "#614124")
+        chess_board.drawRectangle(self.screen, 160, 260, 125, 230, "#EDE6DB")
+        chess_board.Place_Piece(self.screen, "images\Bishop_PP.png", 160 + 30, 260 + 30)
+        chess_board.drawRectangle(self.screen, 160 + 125 + 10, 260, 125, 230, "#EDE6DB")
+        chess_board.Place_Piece(self.screen, "images\Rook_PP.png", (160 + 125 + 20) + 25, 275)
+        chess_board.drawRectangle(self.screen, 160 + (2 * 125) + 20, 260, 125, 230, "#EDE6DB")
+        chess_board.Place_Piece(self.screen, "images\Knight_PP.png", (160 + (2 * 125) + 20) + 50, 325)
+        chess_board.drawRectangle(self.screen, 160 + (3 * 125) + 30, 260, 125, 230, "#EDE6DB")
+        chess_board.Place_Piece(self.screen, "images\Queen_PP.png", (160 + (3 * 125) + 30) + 20, 325)
+        running = True
+        while running:
+            pygame.display.update()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    button_Clicked = pygame.mouse.get_pressed()
+
+                    if (button_Clicked[0]):
+                        mouseclick_Cordinates = list(pygame.mouse.get_pos())
+                        if (mouseclick_Cordinates[0] >= 205 and mouseclick_Cordinates[0] <= 330) and (mouseclick_Cordinates[1] >= 305 and mouseclick_Cordinates[1] <= 535):
+                            if self.White_Turn_Flag:
+                                grid[x][y]= 'wB'
+                            else:
+                                grid[x][y] = 'BB'
+                            return
+                        if (mouseclick_Cordinates[0] >= 340 and mouseclick_Cordinates[0] <= 465) and (mouseclick_Cordinates[1] >= 305 and mouseclick_Cordinates[1] <= 535):
+                            if self.White_Turn_Flag:
+                                grid[x][y]= 'wR'
+                            else:
+                                grid[x][y] = 'BR'
+                            return
+                        if (mouseclick_Cordinates[0] >= 475 and mouseclick_Cordinates[0] <= 600) and (mouseclick_Cordinates[1] >= 305 and mouseclick_Cordinates[1] <= 535):
+                            if self.White_Turn_Flag:
+                                grid[x][y]= 'wN'
+                            else:
+                                grid[x][y] = 'BN'
+                            return
+                        if (mouseclick_Cordinates[0] >= 610 and mouseclick_Cordinates[0] <= 735) and (mouseclick_Cordinates[1] >= 305 and mouseclick_Cordinates[1] <= 535):
+                            if self.White_Turn_Flag:
+                                grid[x][y] = 'wQ'
+                            else:
+                                grid[x][y] = 'BQ'
+                            return
 
 
     def Play_Multiplayer(self):
@@ -202,7 +247,7 @@ class Chess_Game_Multiplayer:
                                     chess_Board.drawRectangle(self.screen, x, y, 100, 100, '#FDF6EC')
                                 else:
                                     chess_Board.drawRectangle(self.screen, x, y, 100, 100, '#C69B7B')
-                                chess_Board.Place_Piece(self.screen, "images\wK.png", x + 60, y + 60)
+                                #chess_Board.Place_Piece(self.screen, "images\wK.png", x + 60, y + 60)
                                 White_previous_Checkmate_print_Flag = False
 
                     elif self.Black_Turn_Flag:
@@ -222,102 +267,225 @@ class Chess_Game_Multiplayer:
                                 x = (Black_previous_Checkmate_Print_Y * 100)
                                 if (Black_previous_Checkmate_Print_X+Black_previous_Checkmate_Print_Y)%2==0:
                                     chess_Board.drawRectangle(self.screen, x, y, 100, 100, '#FDF6EC')
-
                                 else:
                                     chess_Board.drawRectangle(self.screen, x, y, 100, 100, '#C69B7B')
-                                chess_Board.Place_Piece(self.screen, "images\BK.png", x + 60, y + 60)
+                                #chess_Board.Place_Piece(self.screen, "images\BK.png", x + 60, y + 60)
                                 Black_previous_Checkmate_print_Flag = False
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        button_Clicked = pygame.mouse.get_pressed()
+                        if (button_Clicked[0]):
+                            mouseclick_Cordinates = list(pygame.mouse.get_pos())
+                            cordX = math.floor((mouseclick_Cordinates[1] - (45)) / 100)
+                            cordY = math.floor((mouseclick_Cordinates[0] - (45)) / 100)
+                            if (mouseclick_Cordinates[0] < 845 and mouseclick_Cordinates[1] < 845 and cordY >= 0 and cordX >= 0):
+                                if (self.White_Turn_Flag and (find_Peice(get_WhitePieces(),grid[cordX][cordY]))) or (self.Black_Turn_Flag and (find_Peice(get_BlackPieces(),grid[cordX][cordY]))):
+                                    if (grid[cordX][cordY]=='BP' or grid[cordX][cordY]=='wP') and (cordX!=CordX_Previous_Piece or cordY!=CordY_Previous_Piece):
+                                        grid = copy.deepcopy(Previous_State)
+                                        chess_Board.update_board(grid)
+                                        chess_Board.update_UI_chess_board(self.screen,moves,(cordX,cordY))
+                                        moves =  self.Print_Moves(chess_Board, grid, cordX, cordY, "#A64B2A",move_Pawn)
+                                        if len(moves)>0:
+                                            self.Taking_Turn = False
+                                        Previous_Selected_Piece = grid[cordX][cordY]
+                                        CordX_Previous_Piece = cordX
+                                        CordY_Previous_Piece = cordY
 
-                    if (self.Pawn_Move_Flag or self.King_Move_Flag or self.Queen_Move_Flag or self.Rook_Move_Flag or self.Bishop_Move_Flag or self.Knight_Move_Flag):
-                        if event.type == pygame.MOUSEBUTTONDOWN:
-                            button_Clicked = pygame.mouse.get_pressed()
-                            if (button_Clicked[0]):
-                                mouseclick_Cordinates = list(pygame.mouse.get_pos())
-                                cordX = math.floor((mouseclick_Cordinates[1] - (45)) / 100)
-                                cordY = math.floor((mouseclick_Cordinates[0] - (45)) / 100)
-                                if (mouseclick_Cordinates[0] < 845 and mouseclick_Cordinates[1] < 845 and cordY >= 0 and cordX >= 0):
-                                    if (self.White_Turn_Flag and (find_Peice(get_WhitePieces(),grid[cordX][cordY]))) or (self.Black_Turn_Flag and (find_Peice(get_BlackPieces(),grid[cordX][cordY]))):
-                                        if (grid[cordX][cordY]=='BP' or grid[cordX][cordY]=='wP') and (cordX!=CordX_Previous_Piece or cordY!=CordY_Previous_Piece):
-                                            grid = copy.deepcopy(Previous_State)
+                                        self.Mark_Possible_Moves(grid,moves)
+                                        chess_Board.update_board(grid)
+                                    elif  (grid[cordX][cordY]=='BN' or grid[cordX][cordY]=='wN') and (cordX!=CordX_Previous_Piece or cordY!=CordY_Previous_Piece):
+                                        grid = copy.deepcopy(Previous_State)
+                                        chess_Board.update_board(grid)
+                                        chess_Board.update_UI_chess_board(self.screen,moves,(cordX,cordY))
+                                        moves =  self.Print_Moves(chess_Board, grid, cordX, cordY, "#A64B2A",move_Knight)
+                                        if len(moves)>0:
+                                            self.Taking_Turn = False
+                                        Previous_Selected_Piece = grid[cordX][cordY]
+                                        CordX_Previous_Piece = cordX
+                                        CordY_Previous_Piece = cordY
+
+                                        self.Mark_Possible_Moves(grid,moves)
+                                        chess_Board.update_board(grid)
+                                    elif (grid[cordX][cordY] == 'BR' or grid[cordX][cordY] == 'wR') and (
+                                            cordX != CordX_Previous_Piece or cordY != CordY_Previous_Piece):
+                                        grid = copy.deepcopy(Previous_State)
+                                        chess_Board.update_board(grid)
+                                        chess_Board.update_UI_chess_board(self.screen,moves,(cordX,cordY))
+                                        moves = self.Print_Moves(chess_Board, grid, cordX, cordY, "#A64B2A", move_Rook)
+                                        if len(moves)>0:
+                                            self.Taking_Turn = False
+                                        Previous_Selected_Piece = grid[cordX][cordY]
+                                        CordX_Previous_Piece = cordX
+                                        CordY_Previous_Piece = cordY
+                                        self.Mark_Possible_Moves(grid, moves)
+                                        chess_Board.update_board(grid)
+                                    elif (grid[cordX][cordY] == 'BB' or grid[cordX][cordY] == 'wB') and (
+                                            cordX != CordX_Previous_Piece or cordY != CordY_Previous_Piece):
+                                        grid = copy.deepcopy(Previous_State)
+                                        chess_Board.update_board(grid)
+                                        chess_Board.update_UI_chess_board(self.screen,moves,(cordX,cordY))
+                                        moves = self.Print_Moves(chess_Board, grid, cordX, cordY, "#A64B2A", move_Bishop)
+                                        if len(moves)>0:
+                                            self.Taking_Turn = False
+                                        Previous_Selected_Piece = grid[cordX][cordY]
+                                        CordX_Previous_Piece = cordX
+                                        CordY_Previous_Piece = cordY
+                                        self.Mark_Possible_Moves(grid, moves)
+                                        chess_Board.update_board(grid)
+                                    elif (grid[cordX][cordY] == 'BQ' or grid[cordX][cordY] == 'wQ') and (cordX != CordX_Previous_Piece or cordY != CordY_Previous_Piece):
+                                        grid = copy.deepcopy(Previous_State)
+                                        chess_Board.update_board(grid)
+                                        chess_Board.update_UI_chess_board(self.screen,moves,(cordX,cordY))
+                                        moves = self.Print_Moves(chess_Board, grid, cordX, cordY, "#A64B2A", move_Queen)
+                                        if len(moves)>0:
+                                            self.Taking_Turn = False
+                                        Previous_Selected_Piece = grid[cordX][cordY]
+                                        CordX_Previous_Piece = cordX
+                                        CordY_Previous_Piece = cordY
+
+                                        self.Mark_Possible_Moves(grid, moves)
+                                        chess_Board.update_board(grid)
+                                    elif (grid[cordX][cordY] == 'BK' or grid[cordX][cordY] == 'wK') and (cordX != CordX_Previous_Piece or cordY != CordY_Previous_Piece):
+                                        grid = copy.deepcopy(Previous_State)
+                                        chess_Board.update_board(grid)
+                                        chess_Board.update_UI_chess_board(self.screen,moves,(cordX,cordY))
+                                        King_Castling_Flag, moves = self.Print_King_Castling_Moves(chess_Board, grid, cordX,cordY, "#A64B2A",move_King)
+                                        if len(moves)>0:
+                                            self.Taking_Turn = False
+                                        Previous_Selected_Piece = grid[cordX][cordY]
+                                        CordX_Previous_Piece = cordX
+                                        CordY_Previous_Piece = cordY
+                                        self.Mark_Possible_Moves(grid, moves)
+                                        chess_Board.update_board(grid)
+
+                                if  (self.White_Turn_Flag and find_Peice(get_WhitePieces(),Previous_Selected_Piece)) or (self.Black_Turn_Flag and find_Peice(get_BlackPieces(),Previous_Selected_Piece)):
+                                    if grid[cordX][cordY]=="x" and (Previous_Selected_Piece=='wP' or Previous_Selected_Piece=="BP"):
+                                        grid[cordX][cordY] = Previous_Selected_Piece
+                                        grid[CordX_Previous_Piece][CordY_Previous_Piece] = ""
+                                        moves.remove((cordX, cordY))
+                                        self.Remove_Moves(grid)
+                                        Previous_State[CordX_Previous_Piece][CordY_Previous_Piece] = ""
+                                        Previous_State[cordX][cordY] = Previous_Selected_Piece
+                                        grid = copy.deepcopy(Previous_State)
+                                        Previous_Selected_Piece = ""
+                                        if self.White_Turn_Flag and cordX==7:
+                                            self.Pawn_Promotion_Piece(chess_Board,grid,cordX,cordY)
+                                            Previous_State = copy.deepcopy(grid)
                                             chess_Board.update_board(grid)
                                             chess_Board.new_Chess_Board(self.screen)
-                                            moves =  self.Print_Moves(chess_Board, grid, cordX, cordY, "#A64B2A",move_Pawn)
-                                            if len(moves)>0:
-                                                self.Taking_Turn = False
-                                            Previous_Selected_Piece = grid[cordX][cordY]
-                                            CordX_Previous_Piece = cordX
-                                            CordY_Previous_Piece = cordY
-
-                                            self.Mark_Possible_Moves(grid,moves)
-                                            chess_Board.update_board(grid)
-                                        elif  (grid[cordX][cordY]=='BN' or grid[cordX][cordY]=='wN') and (cordX!=CordX_Previous_Piece or cordY!=CordY_Previous_Piece):
-                                            grid = copy.deepcopy(Previous_State)
+                                        elif self.Black_Turn_Flag and cordX==0:
+                                            self.Pawn_Promotion_Piece(chess_Board,grid,cordX,cordY)
+                                            Previous_State = copy.deepcopy(grid)
                                             chess_Board.update_board(grid)
                                             chess_Board.new_Chess_Board(self.screen)
-                                            moves =  self.Print_Moves(chess_Board, grid, cordX, cordY, "#A64B2A",move_Knight)
-                                            if len(moves)>0:
-                                                self.Taking_Turn = False
-                                            Previous_Selected_Piece = grid[cordX][cordY]
-                                            CordX_Previous_Piece = cordX
-                                            CordY_Previous_Piece = cordY
+                                        chess_Board.update_board(grid)
+                                        moves.append((CordX_Previous_Piece, CordY_Previous_Piece))
+                                        chess_Board.update_UI_chess_board(self.screen, moves, (cordX, cordY))
+                                        CordX_Previous_Piece = None
+                                        CordY_Previous_Piece = None
+                                        if self.White_Turn_Flag:
+                                            self.White_Turn_Flag = False
+                                            self.Black_Turn_Flag = True
+                                        elif self.Black_Turn_Flag:
+                                            self.Black_Turn_Flag = False
+                                            self.White_Turn_Flag = True
+                                        self.Taking_Turn = True
 
-                                            self.Mark_Possible_Moves(grid,moves)
-                                            chess_Board.update_board(grid)
-                                        elif (grid[cordX][cordY] == 'BR' or grid[cordX][cordY] == 'wR') and (
-                                                cordX != CordX_Previous_Piece or cordY != CordY_Previous_Piece):
-                                            grid = copy.deepcopy(Previous_State)
-                                            chess_Board.update_board(grid)
-                                            chess_Board.new_Chess_Board(self.screen)
-                                            moves = self.Print_Moves(chess_Board, grid, cordX, cordY, "#A64B2A", move_Rook)
-                                            if len(moves)>0:
-                                                self.Taking_Turn = False
-                                            Previous_Selected_Piece = grid[cordX][cordY]
-                                            CordX_Previous_Piece = cordX
-                                            CordY_Previous_Piece = cordY
-                                            self.Mark_Possible_Moves(grid, moves)
-                                            chess_Board.update_board(grid)
-                                        elif (grid[cordX][cordY] == 'BB' or grid[cordX][cordY] == 'wB') and (
-                                                cordX != CordX_Previous_Piece or cordY != CordY_Previous_Piece):
-                                            grid = copy.deepcopy(Previous_State)
-                                            chess_Board.update_board(grid)
-                                            chess_Board.new_Chess_Board(self.screen)
-                                            moves = self.Print_Moves(chess_Board, grid, cordX, cordY, "#A64B2A", move_Bishop)
-                                            if len(moves)>0:
-                                                self.Taking_Turn = False
-                                            Previous_Selected_Piece = grid[cordX][cordY]
-                                            CordX_Previous_Piece = cordX
-                                            CordY_Previous_Piece = cordY
-                                            self.Mark_Possible_Moves(grid, moves)
-                                            chess_Board.update_board(grid)
-                                        elif (grid[cordX][cordY] == 'BQ' or grid[cordX][cordY] == 'wQ') and (cordX != CordX_Previous_Piece or cordY != CordY_Previous_Piece):
-                                            grid = copy.deepcopy(Previous_State)
-                                            chess_Board.update_board(grid)
-                                            chess_Board.new_Chess_Board(self.screen)
-                                            moves = self.Print_Moves(chess_Board, grid, cordX, cordY, "#A64B2A", move_Queen)
-                                            if len(moves)>0:
-                                                self.Taking_Turn = False
-                                            Previous_Selected_Piece = grid[cordX][cordY]
-                                            CordX_Previous_Piece = cordX
-                                            CordY_Previous_Piece = cordY
+                                    elif grid[cordX][cordY]=="x" and (Previous_Selected_Piece=='BN' or Previous_Selected_Piece=="wN"):
+                                        grid[cordX][cordY] = Previous_Selected_Piece
+                                        grid[CordX_Previous_Piece][CordY_Previous_Piece] = ""
+                                        moves.remove((cordX, cordY))
+                                        self.Remove_Moves(grid)
+                                        Previous_State[CordX_Previous_Piece][CordY_Previous_Piece] = ""
+                                        Previous_State[cordX][cordY] = Previous_Selected_Piece
+                                        grid = copy.deepcopy(Previous_State)
+                                        Previous_Selected_Piece = ""
+                                        chess_Board.update_board(grid)
+                                        moves.append((CordX_Previous_Piece, CordY_Previous_Piece))
+                                        chess_Board.update_UI_chess_board(self.screen, moves, (cordX, cordY))
+                                        CordX_Previous_Piece = None
+                                        CordY_Previous_Piece = None
+                                        if self.White_Turn_Flag:
+                                            self.White_Turn_Flag = False
+                                            self.Black_Turn_Flag = True
+                                        elif self.Black_Turn_Flag:
+                                            self.Black_Turn_Flag = False
+                                            self.White_Turn_Flag = True
+                                        self.Taking_Turn = True
 
-                                            self.Mark_Possible_Moves(grid, moves)
-                                            chess_Board.update_board(grid)
-                                        elif (grid[cordX][cordY] == 'BK' or grid[cordX][cordY] == 'wK') and (cordX != CordX_Previous_Piece or cordY != CordY_Previous_Piece):
-                                            grid = copy.deepcopy(Previous_State)
-                                            chess_Board.update_board(grid)
-                                            chess_Board.new_Chess_Board(self.screen)
-                                            King_Castling_Flag, moves = self.Print_King_Castling_Moves(chess_Board, grid, cordX,cordY, "#A64B2A",move_King)
-                                            if len(moves)>0:
-                                                self.Taking_Turn = False
-                                            Previous_Selected_Piece = grid[cordX][cordY]
-                                            CordX_Previous_Piece = cordX
-                                            CordY_Previous_Piece = cordY
-                                            self.Mark_Possible_Moves(grid, moves)
-                                            chess_Board.update_board(grid)
+                                    elif grid[cordX][cordY]=="x" and (Previous_Selected_Piece=='BR' or Previous_Selected_Piece=="wR"):
+                                        grid[cordX][cordY] = Previous_Selected_Piece
+                                        grid[CordX_Previous_Piece][CordY_Previous_Piece] = ""
+                                        moves.remove((cordX, cordY))
+                                        self.Remove_Moves(grid)
+                                        Previous_State[CordX_Previous_Piece][CordY_Previous_Piece] = ""
+                                        Previous_State[cordX][cordY] = Previous_Selected_Piece
+                                        grid = copy.deepcopy(Previous_State)
+                                        Previous_Selected_Piece = ""
+                                        chess_Board.update_board(grid)
+                                        moves.append((CordX_Previous_Piece, CordY_Previous_Piece))
+                                        chess_Board.update_UI_chess_board(self.screen, moves, (cordX, cordY))
+                                        CordX_Previous_Piece = None
+                                        CordY_Previous_Piece = None
+                                        if self.White_Turn_Flag:
+                                            self.White_Turn_Flag = False
+                                            self.Black_Turn_Flag = True
+                                        elif self.Black_Turn_Flag:
+                                            self.Black_Turn_Flag = False
+                                            self.White_Turn_Flag = True
+                                        self.Taking_Turn = True
 
-                                    if  (self.White_Turn_Flag and find_Peice(get_WhitePieces(),Previous_Selected_Piece)) or (self.Black_Turn_Flag and find_Peice(get_BlackPieces(),Previous_Selected_Piece)):
-                                        if grid[cordX][cordY]=="x" and (Previous_Selected_Piece=='wP' or Previous_Selected_Piece=="BP"):
 
+                                    elif grid[cordX][cordY]=="x" and (Previous_Selected_Piece=='BB' or Previous_Selected_Piece=="wB"):
+                                        grid[cordX][cordY] = Previous_Selected_Piece
+                                        grid[CordX_Previous_Piece][CordY_Previous_Piece] = ""
+                                        moves.remove((cordX, cordY))
+                                        self.Remove_Moves(grid)
+                                        Previous_State[CordX_Previous_Piece][CordY_Previous_Piece] = ""
+                                        Previous_State[cordX][cordY] = Previous_Selected_Piece
+                                        grid = copy.deepcopy(Previous_State)
+                                        Previous_Selected_Piece = ""
+                                        chess_Board.update_board(grid)
+                                        moves.append((CordX_Previous_Piece, CordY_Previous_Piece))
+                                        chess_Board.update_UI_chess_board(self.screen, moves, (cordX, cordY))
+                                        CordX_Previous_Piece = None
+                                        CordY_Previous_Piece = None
+                                        if self.White_Turn_Flag:
+                                            self.White_Turn_Flag = False
+                                            self.Black_Turn_Flag = True
+                                        elif self.Black_Turn_Flag:
+                                            self.Black_Turn_Flag = False
+                                            self.White_Turn_Flag = True
+                                        self.Taking_Turn = True
+
+
+
+                                    elif grid[cordX][cordY]=="x" and (Previous_Selected_Piece=='BQ' or Previous_Selected_Piece=="wQ"):
+
+                                        grid[cordX][cordY] = Previous_Selected_Piece
+                                        grid[CordX_Previous_Piece][CordY_Previous_Piece] = ""
+                                        moves.remove((cordX, cordY))
+                                        self.Remove_Moves(grid)
+                                        Previous_State[CordX_Previous_Piece][CordY_Previous_Piece] = ""
+                                        Previous_State[cordX][cordY] = Previous_Selected_Piece
+                                        grid = copy.deepcopy(Previous_State)
+                                        Previous_Selected_Piece = ""
+                                        chess_Board.update_board(grid)
+                                        moves.append((CordX_Previous_Piece, CordY_Previous_Piece))
+                                        chess_Board.update_UI_chess_board(self.screen, moves, (cordX, cordY))
+                                        CordX_Previous_Piece = None
+                                        CordY_Previous_Piece = None
+                                        if self.White_Turn_Flag:
+                                            self.White_Turn_Flag = False
+                                            self.Black_Turn_Flag = True
+                                        elif self.Black_Turn_Flag:
+                                            self.Black_Turn_Flag = False
+                                            self.White_Turn_Flag = True
+                                        self.Taking_Turn = True
+
+
+
+                                    elif grid[cordX][cordY]=="x" and (Previous_Selected_Piece=='BK' or Previous_Selected_Piece=="wK"):
+                                        if not King_Castling_Flag:
                                             grid[cordX][cordY] = Previous_Selected_Piece
                                             grid[CordX_Previous_Piece][CordY_Previous_Piece] = ""
                                             moves.remove((cordX, cordY))
@@ -326,10 +494,11 @@ class Chess_Game_Multiplayer:
                                             Previous_State[cordX][cordY] = Previous_Selected_Piece
                                             grid = copy.deepcopy(Previous_State)
                                             Previous_Selected_Piece = ""
+                                            chess_Board.update_board(grid)
+                                            moves.append((CordX_Previous_Piece, CordY_Previous_Piece))
+                                            chess_Board.update_UI_chess_board(self.screen, moves, (cordX, cordY))
                                             CordX_Previous_Piece = None
                                             CordY_Previous_Piece = None
-                                            chess_Board.update_board(grid)
-                                            chess_Board.new_Chess_Board(self.screen)
                                             if self.White_Turn_Flag:
                                                 self.White_Turn_Flag = False
                                                 self.Black_Turn_Flag = True
@@ -337,20 +506,53 @@ class Chess_Game_Multiplayer:
                                                 self.Black_Turn_Flag = False
                                                 self.White_Turn_Flag = True
                                             self.Taking_Turn = True
-
-                                        elif grid[cordX][cordY]=="x" and (Previous_Selected_Piece=='BN' or Previous_Selected_Piece=="wN"):
+                                        else:
                                             grid[cordX][cordY] = Previous_Selected_Piece
                                             grid[CordX_Previous_Piece][CordY_Previous_Piece] = ""
+                                            Previous_State[cordX][cordY] = Previous_Selected_Piece
+                                            Previous_State[CordX_Previous_Piece][CordY_Previous_Piece] = ""
+                                            if Previous_Selected_Piece=='BK':
+                                                if grid[cordX][cordY+1]=='BR' and not self.Black_Castling_Right:
+                                                    grid[cordX][cordY + 1] = ''
+                                                    grid[CordX_Previous_Piece][CordY_Previous_Piece+1] = 'BR'
+                                                    Previous_State[cordX][cordY + 1] = ''
+                                                    Previous_State[CordX_Previous_Piece][CordY_Previous_Piece + 1] = 'BR'
+                                                    self.Black_Castling_Right = True
+                                                    moves.append((cordX, cordY + 1))
+
+                                                elif grid[cordX][cordY-1]=='BR' and not self.Black_Castling_Left:
+                                                    grid[cordX][cordY - 1] = ''
+                                                    grid[CordX_Previous_Piece][CordY_Previous_Piece-1] = 'BR'
+                                                    Previous_State[cordX][cordY - 1] = ''
+                                                    Previous_State[CordX_Previous_Piece][CordY_Previous_Piece - 1] = 'BR'
+                                                    moves.append((cordX, cordY - 1))
+                                                    self.Black_Castling_Left = True
+
+                                            elif Previous_Selected_Piece=='wK':
+                                                if grid[cordX][cordY + 1] == 'wR' and not self.White_Castling_Right:
+                                                    grid[cordX][cordY + 1] = ''
+                                                    grid[CordX_Previous_Piece][CordY_Previous_Piece + 1] = 'wR'
+                                                    Previous_State[cordX][cordY + 1] = ''
+                                                    Previous_State[cordX][cordY + 1] = 'wR'
+                                                    self.White_Castling_Right = True
+                                                    moves.append((cordX, cordY + 1))
+
+                                                elif grid[cordX][cordY - 1] == 'wR' and not self.White_Castling_Left:
+                                                    grid[cordX][cordY - 1] = ''
+                                                    grid[CordX_Previous_Piece][CordY_Previous_Piece - 1] = 'wR'
+                                                    Previous_State[cordX][cordY - 1] = ''
+                                                    Previous_State[CordX_Previous_Piece][CordY_Previous_Piece - 1] = 'wR'
+                                                    self.White_Castling_Left = True
+                                                    moves.append((cordX, cordY-1))
                                             moves.remove((cordX, cordY))
                                             self.Remove_Moves(grid)
-                                            Previous_State[CordX_Previous_Piece][CordY_Previous_Piece] = ""
-                                            Previous_State[cordX][cordY] = Previous_Selected_Piece
                                             grid = copy.deepcopy(Previous_State)
                                             Previous_Selected_Piece = ""
+                                            chess_Board.update_board(grid)
+                                            moves.append((CordX_Previous_Piece, CordY_Previous_Piece))
+                                            chess_Board.update_UI_chess_board(self.screen, moves, (cordX, cordY))
                                             CordX_Previous_Piece = None
                                             CordY_Previous_Piece = None
-                                            chess_Board.update_board(grid)
-                                            chess_Board.new_Chess_Board(self.screen)
                                             if self.White_Turn_Flag:
                                                 self.White_Turn_Flag = False
                                                 self.Black_Turn_Flag = True
@@ -358,143 +560,6 @@ class Chess_Game_Multiplayer:
                                                 self.Black_Turn_Flag = False
                                                 self.White_Turn_Flag = True
                                             self.Taking_Turn = True
-
-                                        elif grid[cordX][cordY]=="x" and (Previous_Selected_Piece=='BR' or Previous_Selected_Piece=="wR"):
-                                            grid[cordX][cordY] = Previous_Selected_Piece
-                                            grid[CordX_Previous_Piece][CordY_Previous_Piece] = ""
-                                            moves.remove((cordX, cordY))
-                                            self.Remove_Moves(grid)
-                                            Previous_State[CordX_Previous_Piece][CordY_Previous_Piece] = ""
-                                            Previous_State[cordX][cordY] = Previous_Selected_Piece
-                                            grid = copy.deepcopy(Previous_State)
-                                            Previous_Selected_Piece = ""
-                                            CordX_Previous_Piece = None
-                                            CordY_Previous_Piece = None
-                                            chess_Board.update_board(grid)
-                                            chess_Board.new_Chess_Board(self.screen)
-                                            if self.White_Turn_Flag:
-                                                self.White_Turn_Flag = False
-                                                self.Black_Turn_Flag = True
-                                            elif self.Black_Turn_Flag:
-                                                self.Black_Turn_Flag = False
-                                                self.White_Turn_Flag = True
-                                            self.Taking_Turn = True
-
-
-                                        elif grid[cordX][cordY]=="x" and (Previous_Selected_Piece=='BB' or Previous_Selected_Piece=="wB"):
-                                            grid[cordX][cordY] = Previous_Selected_Piece
-                                            grid[CordX_Previous_Piece][CordY_Previous_Piece] = ""
-                                            moves.remove((cordX, cordY))
-                                            self.Remove_Moves(grid)
-                                            Previous_State[CordX_Previous_Piece][CordY_Previous_Piece] = ""
-                                            Previous_State[cordX][cordY] = Previous_Selected_Piece
-                                            grid = copy.deepcopy(Previous_State)
-                                            Previous_Selected_Piece = ""
-                                            CordX_Previous_Piece = None
-                                            CordY_Previous_Piece = None
-                                            chess_Board.update_board(grid)
-                                            chess_Board.new_Chess_Board(self.screen)
-                                            if self.White_Turn_Flag:
-                                                self.White_Turn_Flag = False
-                                                self.Black_Turn_Flag = True
-                                            elif self.Black_Turn_Flag:
-                                                self.Black_Turn_Flag = False
-                                                self.White_Turn_Flag = True
-                                            self.Taking_Turn = True
-
-
-
-                                        elif grid[cordX][cordY]=="x" and (Previous_Selected_Piece=='BQ' or Previous_Selected_Piece=="wQ"):
-
-                                            grid[cordX][cordY] = Previous_Selected_Piece
-                                            grid[CordX_Previous_Piece][CordY_Previous_Piece] = ""
-                                            moves.remove((cordX, cordY))
-                                            self.Remove_Moves(grid)
-                                            Previous_State[CordX_Previous_Piece][CordY_Previous_Piece] = ""
-                                            Previous_State[cordX][cordY] = Previous_Selected_Piece
-                                            grid = copy.deepcopy(Previous_State)
-                                            Previous_Selected_Piece = ""
-                                            CordX_Previous_Piece = None
-                                            CordY_Previous_Piece = None
-                                            chess_Board.update_board(grid)
-                                            chess_Board.new_Chess_Board(self.screen)
-                                            if self.White_Turn_Flag:
-                                                self.White_Turn_Flag = False
-                                                self.Black_Turn_Flag = True
-                                            elif self.Black_Turn_Flag:
-                                                self.Black_Turn_Flag = False
-                                                self.White_Turn_Flag = True
-                                            self.Taking_Turn = True
-
-
-
-                                        elif grid[cordX][cordY]=="x" and (Previous_Selected_Piece=='BK' or Previous_Selected_Piece=="wK"):
-                                            if not King_Castling_Flag:
-                                                grid[cordX][cordY] = Previous_Selected_Piece
-                                                grid[CordX_Previous_Piece][CordY_Previous_Piece] = ""
-                                                moves.remove((cordX, cordY))
-                                                self.Remove_Moves(grid)
-                                                Previous_State[CordX_Previous_Piece][CordY_Previous_Piece] = ""
-                                                Previous_State[cordX][cordY] = Previous_Selected_Piece
-                                                grid = copy.deepcopy(Previous_State)
-                                                Previous_Selected_Piece = ""
-                                                CordX_Previous_Piece = None
-                                                CordY_Previous_Piece = None
-                                                chess_Board.update_board(grid)
-                                                chess_Board.new_Chess_Board(self.screen)
-                                                if self.White_Turn_Flag:
-                                                    self.White_Turn_Flag = False
-                                                    self.Black_Turn_Flag = True
-                                                elif self.Black_Turn_Flag:
-                                                    self.Black_Turn_Flag = False
-                                                    self.White_Turn_Flag = True
-                                                self.Taking_Turn = True
-                                            else:
-                                                grid[cordX][cordY] = Previous_Selected_Piece
-                                                grid[CordX_Previous_Piece][CordY_Previous_Piece] = ""
-                                                Previous_State[cordX][cordY] = Previous_Selected_Piece
-                                                Previous_State[CordX_Previous_Piece][CordY_Previous_Piece] = ""
-                                                if Previous_Selected_Piece=='BK':
-                                                    if grid[cordX][cordY+1]=='BR' and not self.Black_Castling_Right:
-                                                        grid[cordX][cordY + 1] = ''
-                                                        grid[CordX_Previous_Piece][CordY_Previous_Piece+1] = 'BR'
-                                                        Previous_State[cordX][cordY + 1] = ''
-                                                        Previous_State[CordX_Previous_Piece][CordY_Previous_Piece + 1] = 'BR'
-                                                        self.Black_Castling_Right = True
-                                                    elif grid[cordX][cordY-1]=='BR' and not self.Black_Castling_Left:
-                                                        grid[cordX][cordY - 1] = ''
-                                                        grid[CordX_Previous_Piece][CordY_Previous_Piece-1] = 'BR'
-                                                        Previous_State[cordX][cordY - 1] = ''
-                                                        Previous_State[CordX_Previous_Piece][CordY_Previous_Piece - 1] = 'BR'
-                                                        self.Black_Castling_Left = True
-                                                elif Previous_Selected_Piece=='wK':
-                                                    if grid[cordX][cordY + 1] == 'wR' and not self.White_Castling_Right:
-                                                        grid[cordX][cordY + 1] = ''
-                                                        grid[CordX_Previous_Piece][CordY_Previous_Piece + 1] = 'wR'
-                                                        Previous_State[cordX][cordY + 1] = ''
-                                                        Previous_State[CordX_Previous_Piece][CordY_Previous_Piece + 1] = 'wR'
-                                                        self.White_Castling_Right = True
-                                                    elif grid[cordX][cordY - 1] == 'wR' and not self.White_Castling_Left:
-                                                        grid[cordX][cordY - 1] = ''
-                                                        grid[CordX_Previous_Piece][CordY_Previous_Piece - 1] = 'wR'
-                                                        Previous_State[cordX][cordY - 1] = ''
-                                                        Previous_State[CordX_Previous_Piece][CordY_Previous_Piece - 1] = 'wR'
-                                                        self.White_Castling_Left = True
-                                                moves.remove((cordX, cordY))
-                                                self.Remove_Moves(grid)
-                                                grid = copy.deepcopy(Previous_State)
-                                                Previous_Selected_Piece = ""
-                                                CordX_Previous_Piece = None
-                                                CordY_Previous_Piece = None
-                                                chess_Board.update_board(grid)
-                                                chess_Board.new_Chess_Board(self.screen)
-                                                if self.White_Turn_Flag:
-                                                    self.White_Turn_Flag = False
-                                                    self.Black_Turn_Flag = True
-                                                elif self.Black_Turn_Flag:
-                                                    self.Black_Turn_Flag = False
-                                                    self.White_Turn_Flag = True
-                                                self.Taking_Turn = True
                 else:
                     if self.White_Turn_Flag and not Winner_Print_Flag:
                         chess_Board.Display_Text_on_Board(self.screen, "BLACK WON!",375, 20, 25, '#FFEBC1')
