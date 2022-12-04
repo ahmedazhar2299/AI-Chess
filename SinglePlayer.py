@@ -34,8 +34,9 @@ class Chess_Game_Singleplayer:
         self.Black_Turn_Flag = False
         self.White_Turn_Flag = True
         self.Taking_Turn  = True
+        self.Max_Depth = 5
 
-    def CalculateScore(self, grid):
+    def Board_Score(self, grid):
         score = 0
         for i in range(8):
             for j in range(8):
@@ -64,6 +65,90 @@ class Chess_Game_Singleplayer:
                 elif grid[i][j] == 'BK':
                     score -= 900
         return score
+    def Board_Position_Impact_Score(self,grid):
+        pawn = [
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [10, 10, 10, 10, 10, 10, 10, 10],
+            [10, 10, 20, 30, 30, 20, 10, 10],
+            [5, 5, 10, 25, 25, 10, 5, 5],
+            [0, 0, 0, 20, 20, 0, 0, 0],
+            [5, -5, -10, 0, 0, -10, -5, 5],
+            [5, 10, 10, -20, -20, 10, 10, 5],
+            [0, 0, 0, 0, 0, 0, 0, 0]
+        ]
+        knight = [
+            [-50, -40, -30, -30, -30, -30, -40, -50],
+            [-40, -20, 0, 0, 0, 0, -20, -40],
+            [-30, 0, 10, 15, 15, 10, 0, -30],
+            [-30, 5, 15, 20, 20, 15, 5, -30],
+            [-30, 0, 15, 20, 20, 15, 0, -30],
+            [-30, 5, 10, 15, 15, 10, 5, -30],
+            [-40, -20, 0, 5, 5, 0, -20, -40],
+            [-50, -40, -30, -30, -30, -30, -40, -50],
+        ]
+        bishop = [
+            [-20, -10, -10, -10, -10, -10, -10, -20],
+            [-10, 0, 0, 0, 0, 0, 0, -10],
+            [-10, 0, 5, 10, 10, 5, 0, -10],
+            [-10, 5, 5, 10, 10, 5, 5, -10],
+            [-10, 0, 10, 10, 10, 10, 0, -10],
+            [-10, 10, 10, 10, 10, 10, 10, -10],
+            [-10, 5, 0, 0, 0, 0, 5, -10],
+            [-20, -10, -10, -10, -10, -10, -10, -20]
+        ]
+        rook = [
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [5, 10, 10, 10, 10, 10, 10, 5],
+            [-5, 0, 0, 0, 0, 0, 0, -5],
+            [-5, 0, 0, 0, 0, 0, 0, -5],
+            [-5, 0, 0, 0, 0, 0, 0, -5],
+            [-5, 0, 0, 0, 0, 0, 0, -5],
+            [-5, 0, 0, 0, 0, 0, 0, -5],
+            [0, 0, 0, 5, 5, 0, 0, 0]
+        ]
+        queen = [
+            [-20, -10, -10, -5, -5, -10, -10, -20],
+            [-10, 0, 0, 0, 0, 0, 0, -10],
+            [-10, 0, 5, 5, 5, 5, 0, -10],
+            [-5, 0, 5, 5, 5, 5, 0, -5],
+            [0, 0, 5, 5, 5, 5, 0, -5],
+            [-10, 5, 5, 5, 5, 5, 0, -10],
+            [-10, 0, 5, 0, 0, 0, 0, -10],
+            [-20, -10, -10, -5, -5, -10, -10, -20]
+            ]
+        king = [
+            [-50, -40, -30, -20, -20, -30, -40, -50],
+            [-30, -20, -10, 0, 0, -10, -20, -30],
+            [-30, -10, 20, 30, 30, 20, -10, -30],
+            [-30, -10, 30, 40, 40, 30, -10, -30],
+            [-30, -10, 30, 40, 40, 30, -10, -30],
+            [-30, -10, 20, 30, 30, 20, -10, -30],
+            [-30, -30, 0, 0, 0, 0, -30, -30],
+            [-50, -30, -30, -30, -30, -30, -30, -50]
+        ]
+
+        score = 0
+        for i in range(8):
+            for j in range(8):
+                if grid[i][j] == 'wP':
+                    score += pawn[i][j]
+                elif grid[i][j] == 'wN':
+                    score += knight[i][j]
+                elif grid[i][j] == 'wB':
+                    score += bishop[i][j]
+                elif grid[i][j] == 'wR':
+                    score += rook[i][j]
+                elif grid[i][j] == 'wQ':
+                    score += queen[i][j]
+                elif grid[i][j] == 'wK':
+                    score += king[i][j]
+        return score
+
+    def Evaluation_Function(self,grid):
+        Piece_score = self.Board_Score(grid)
+        Position_Impact_Score = self.Board_Position_Impact_Score(grid)
+        return Piece_score+Position_Impact_Score
+
 
     def Apply_Temp_Move(self,grid,m):
         m_pos = m.get_Position()
@@ -76,28 +161,41 @@ class Chess_Game_Singleplayer:
             new_x,new_y = new_m_cords
             Temp_Grid[x][y] = ""
             Temp_Grid[new_x][new_y] = m_piece
-            Total_Temp_Grids.append(Temp_Grid)
+            Total_Temp_Grids.append(((x,y),(new_x,new_y),Temp_Grid))
         return Total_Temp_Grids
 
-    def Tree_MinMax(self,grid,Max_depth):
-        start_depth = 0
-        Tree = dict()
-        for i in range(Max_depth):
-            Tree[i] = list()
-        Tree[0].append((self.CalculateScore(grid),grid))
+    def get_possible_action(self,grid):
+        Level = list()
+        total_moves = self.AI_Move(grid)
+        for m in total_moves:
+            temp_grids = self.Apply_Temp_Move(grid, m)
+            for t in temp_grids:
+                Level.append(t)
+        return Level
 
-        while start_depth<Max_depth-1:
-            for nodes in Tree[start_depth]:
-                s, t_grid = nodes
-
-                total_moves = self.AI_Move(t_grid)
-                for m in total_moves:
-                    temp_grids = self.Apply_Temp_Move(t_grid,m)
-                    for t in  temp_grids:
-
-                        Tree[start_depth+1].append((self.CalculateScore(t),t))
-            start_depth+= 1
-
+    def Alpha_Beta_Pruning(self,old_position,new_position, current_depth, max_depth,grid, is_max_turn, alpha, beta):
+        if current_depth == max_depth:
+            return self.Evaluation_Function(grid), grid, old_position , new_position
+        possible_actions = self.get_possible_action(grid)
+        random.shuffle(possible_actions)  # randomness
+        best_value = float('-inf') if is_max_turn else float('inf')
+        action_target = ""
+        for act in possible_actions:
+            old_position,new_position,action_key = act
+            eval_child, action_child,old_position,new_position = self.Alpha_Beta_Pruning(old_position,new_position,current_depth + 1,max_depth ,action_key, not is_max_turn, alpha, beta)
+            if is_max_turn and best_value < eval_child:
+                best_value = eval_child
+                action_target = action_key
+                alpha = max(alpha, best_value)
+                if beta <= alpha:
+                    break
+            elif (not is_max_turn) and best_value > eval_child:
+                best_value = eval_child
+                action_target = action_key
+                beta = min(beta, best_value)
+                if beta <= alpha:
+                    break
+        return best_value, action_target,  old_position , new_position
 
 
     def Mark_Possible_Moves(self,grid,chess_Moves):
@@ -222,6 +320,7 @@ class Chess_Game_Singleplayer:
         return Possbile_Move_Set
 
     def Evaluation(self,grid):
+        pygame.time.delay(self.Max_Depth*1000)
         state = self.AI_Move(grid)
         choice = state.pop(random.randrange(len(state)))
         moves = choice.get_Moves()
@@ -324,7 +423,6 @@ class Chess_Game_Singleplayer:
         return flag
 
 
-
     def Play_SinglePlayer(self):
         chess_Board = Chess_Board()
         chess_Board.new_Chess_Board(self.screen)
@@ -333,7 +431,6 @@ class Chess_Game_Singleplayer:
         CordX_Previous_Piece = 0
         CordY_Previous_Piece = 0
         grid = chess_Board.get_board()
-        self.Tree_MinMax(grid, 2)
         Black_previous_Checkmate_Print_X = 0
         Black_previous_Checkmate_Print_Y = 0
         Black_previous_Checkmate_print_Flag = False
@@ -397,6 +494,7 @@ class Chess_Game_Singleplayer:
                     if self.White_Turn_Flag:
                         pygame.time.delay(500)
                         grid = copy.deepcopy(Previous_State)
+                       # score, Temp_grid,position,move =   self.Alpha_Beta_Pruning((-1,-1),(-1,-1),0,3,copy.deepcopy(grid),True,-99999,99999)
                         position, move = self.Evaluation(grid)
                         if len(move) > 0:
                             self.Taking_Turn = False
@@ -411,11 +509,9 @@ class Chess_Game_Singleplayer:
                         Previous_State[CordX_Previous_Piece][CordY_Previous_Piece] = ""
                         Previous_State[cordX][cordY] = Previous_Selected_Piece
                         grid = copy.deepcopy(Previous_State)
-                        print(Previous_Selected_Piece)
                         if Previous_Selected_Piece=='wP' and cordX == 7:
                             x = random.choice(['wQ','wB','wN','wR'])
                             grid[cordX][cordY] = x
-                            print(grid)
                             Previous_State = copy.deepcopy(grid)
                             chess_Board.update_board(grid)
                         Previous_Selected_Piece = ""
